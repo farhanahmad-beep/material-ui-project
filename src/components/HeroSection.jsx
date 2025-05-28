@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import {
   Box,
   Container,
@@ -239,7 +240,20 @@ const OrbitingElement = ({ size = 32, color = '#00fff7', duration = 8, radius = 
 const HeroSection = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const heroImage = "https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80";
+  
+  // Get data from Redux store
+  const heroData = useSelector((state) => state.hero);
+  const {
+    badge,
+    title,
+    description,
+    buttons,
+    heroImage,
+    floatingElements,
+    orbitingElements,
+    floatingCubes,
+    glowOrbs
+  } = heroData;
 
   return (
     <Box
@@ -259,15 +273,25 @@ const HeroSection = () => {
       <ParticleField />
       
       {/* Floating 3D Cubes */}
-      <FloatingCube delay={0} duration={8} size={100} position={{ top: '15%', left: '5%' }} />
-      <FloatingCube delay={2} duration={6} size={80} position={{ bottom: '30%', right: '15%' }} />
-      <FloatingCube delay={4} duration={10} size={60} position={{ top: '10%', right: '30%' }} />
-      <FloatingCube delay={1} duration={7} size={40} position={{ bottom: '20%', left: '15%' }} />
+      {floatingCubes.map((cube) => (
+        <FloatingCube 
+          key={cube.id}
+          delay={cube.delay} 
+          duration={cube.duration} 
+          size={cube.size} 
+          position={cube.position} 
+        />
+      ))}
       
       {/* Glowing Orbs */}
-      <GlowOrb delay={0} position={{ top: '20%', left: '10%' }} size={150} />
-      <GlowOrb delay={2} position={{ bottom: '40%', right: '20%' }} size={120} />
-      <GlowOrb delay={4} position={{ top: '10%', right: '40%' }} size={100} />
+      {glowOrbs.map((orb) => (
+        <GlowOrb 
+          key={orb.id}
+          delay={orb.delay} 
+          position={orb.position} 
+          size={orb.size} 
+        />
+      ))}
 
       <Container maxWidth="xl" sx={{ position: 'relative', zIndex: 20 }}>
         <Box sx={{ pt: 10, pb: 6 }}>
@@ -288,7 +312,7 @@ const HeroSection = () => {
                   sx={{ mb: 3 }}
                 >
                   <Chip
-                    label="NEXT-GEN GAMING EXPERIENCE"
+                    label={badge}
                     sx={{
                       backgroundColor: 'rgba(0,255,247,0.2)',
                       color: '#00fff7',
@@ -317,7 +341,7 @@ const HeroSection = () => {
                     textShadow: '0 0 30px rgba(0,255,247,0.5)',
                   }}
                 >
-                  DOMINATE
+                  {title.first}
                   <br />
                   <Box
                     component="span"
@@ -328,7 +352,7 @@ const HeroSection = () => {
                       WebkitTextFillColor: 'transparent',
                     }}
                   >
-                    THE ARENA
+                    {title.second}
                   </Box>
                 </MotionTypography>
 
@@ -346,8 +370,7 @@ const HeroSection = () => {
                     fontSize: { xs: '1.1rem', md: '1.3rem' },
                   }}
                 >
-                  Join millions of elite gamers in the ultimate competitive gaming platform. 
-                  Master your skills, climb the ranks, and claim your victory in the digital battleground.
+                  {description}
                 </MotionTypography>
 
                 {/* Action Buttons */}
@@ -378,7 +401,7 @@ const HeroSection = () => {
                       minWidth: '200px',
                     }}
                   >
-                    Start Gaming Now
+                    {buttons.primary.text}
                   </MotionButton>
 
                   <MotionButton
@@ -408,7 +431,7 @@ const HeroSection = () => {
                       },
                     }}
                   >
-                    Join Community
+                    {buttons.secondary.text}
                   </MotionButton>
                 </Stack>
 
@@ -425,50 +448,28 @@ const HeroSection = () => {
                 sx={{ position: 'relative' }}
               >
                 {/* Floating UI Elements */}
-                <FloatingUIElement
-                  text="+1000 XP"
-                  icon="🎯"
-                  delay={0}
-                  position={{ top: '10%', right: '10%' }}
-                />
-
-                <FloatingUIElement
-                  text="VICTORY!"
-                  icon="🏆"
-                  delay={1}
-                  position={{ bottom: '20%', left: '10%' }}
-                />
-
-                <FloatingUIElement
-                  text="KILL STREAK"
-                  icon="⚡"
-                  delay={2}
-                  position={{ top: '30%', left: '5%' }}
-                />
+                {floatingElements.map((element) => (
+                  <FloatingUIElement
+                    key={element.id}
+                    text={element.text}
+                    icon={element.icon}
+                    delay={element.delay}
+                    position={element.position}
+                  />
+                ))}
 
                 {/* Orbiting Elements */}
                 <Box sx={{ position: 'relative' }}>
-                  <OrbitingElement 
-                    size={32} 
-                    color="#00fff7" 
-                    duration={8} 
-                    radius={280} 
-                    delay={0} 
-                  />
-                  <OrbitingElement 
-                    size={24} 
-                    color="#ff0080" 
-                    duration={12} 
-                    radius={320} 
-                    delay={2} 
-                  />
-                  <OrbitingElement 
-                    size={20} 
-                    color="#8000ff" 
-                    duration={6} 
-                    radius={250} 
-                    delay={4} 
-                  />
+                  {orbitingElements.map((element) => (
+                    <OrbitingElement 
+                      key={element.id}
+                      size={element.size} 
+                      color={element.color} 
+                      duration={element.duration} 
+                      radius={element.radius} 
+                      delay={element.delay} 
+                    />
+                  ))}
                 </Box>
 
                 {/* Main Hero Image with Animated Border */}

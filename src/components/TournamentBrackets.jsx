@@ -1,4 +1,5 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import {
   Box,
@@ -27,37 +28,8 @@ import {
   Extension,
 } from "@mui/icons-material";
 
-const NexusArenaSection = () => {
-  const gameCategories = [
-    {
-      id: 3,
-      title: "FPS Showdown",
-      description:
-        "Fast-paced first-person shooter tournaments with epic prize pools",
-      image:
-        "https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=400&h=250&fit=crop",
-      players: "15.8K",
-      rating: 4.9,
-      trending: true,
-      icon: <FlashOn />,
-      color: "#FF1744",
-      gradient: "linear-gradient(135deg, #FF1744 0%, #FF5722 100%)",
-    },
-    {
-      id: 4,
-      title: "Strategy Zone",
-      description:
-        "Tactical gameplay that tests your strategic mind and decision making",
-      image:
-        "https://images.unsplash.com/photo-1606092195730-5d7b9af1efc5?w=400&h=250&fit=crop",
-      players: "6.1K",
-      rating: 4.7,
-      trending: false,
-      icon: <Extension />,
-      color: "#00E676",
-      gradient: "linear-gradient(135deg, #00E676 0%, #00C853 100%)",
-    },
-  ];
+const TournamentBrackets = () => {
+  const gameCategories = useSelector((state) => state.tournament.gameCategories);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -401,7 +373,7 @@ const NexusArenaSection = () => {
                         zIndex: 2,
                       }}
                     >
-                      {category.icon}
+                      <category.icon />
                     </Avatar>
                   </Box>
 
@@ -561,4 +533,4 @@ const NexusArenaSection = () => {
   );
 };
 
-export default NexusArenaSection;
+export default TournamentBrackets;
