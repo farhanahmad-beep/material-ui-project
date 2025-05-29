@@ -18,14 +18,10 @@ import {
 } from "@mui/material";
 import {
   PlayArrow,
-  Star,
   TrendingUp,
   SportsEsports,
   People,
-  EmojiEvents,
-  FlashOn,
-  MyLocation,
-  Extension,
+
 } from "@mui/icons-material";
 
 const TournamentBrackets = () => {
@@ -41,6 +37,11 @@ const TournamentBrackets = () => {
       },
     },
   };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 },
+  }
 
   const cardVariants = {
     hidden: {

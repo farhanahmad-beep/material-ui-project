@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { 
   Box, 
   Typography, 
@@ -10,37 +11,45 @@ import {
   Grid,
   Chip,
   alpha,
-  useTheme
+  useTheme, TextField
 } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Quote, Play, Star } from 'lucide-react';
-
-const testimonials = [
-  {
-    id: 4,
-    name: "Emma Thompson",
-    role: "Game Developer",
-    avatar: "https://i.pravatar.cc/150?img=4",
-    rating: 5,
-    text: "Testing our indie games on Nexus Gaming provides incredible performance insights. The platform's optimization tools help us deliver the best gaming experience possible.",
-    game: "Indie Games",
-    bgColor: "#06b6d4",
-    accent: "#f59e0b"
-  }
-];
+import {
+  selectTestimonials,
+  selectCurrentIndex,
+  selectCurrentTestimonial,
+  selectIsAutoPlaying,
+  selectAutoPlayInterval,
+  setCurrentIndex,
+  nextTestimonial
+} from '../store/slices/testimonialsSlice';
 
 const NexusGamingTestimonials = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const dispatch = useDispatch();
   const theme = useTheme();
+  
+  // Redux selectors
+  const testimonials = useSelector(selectTestimonials);
+  const currentIndex = useSelector(selectCurrentIndex);
+  const currentTestimonial = useSelector(selectCurrentTestimonial);
+  const isAutoPlaying = useSelector(selectIsAutoPlaying);
+  const autoPlayInterval = useSelector(selectAutoPlayInterval);
 
   useEffect(() => {
+    if (!isAutoPlaying) return;
+    
     const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % testimonials.length);
-    }, 5000);
+      dispatch(nextTestimonial());
+    }, autoPlayInterval);
+    
     return () => clearInterval(interval);
-  }, []);
+  }, [dispatch, isAutoPlaying, autoPlayInterval]);
 
-  const currentTestimonial = testimonials[currentIndex];
+  const handleNavigationClick = (index) => {
+    dispatch(setCurrentIndex(index));
+  };
+  
 
   return (
     <Box
@@ -184,7 +193,7 @@ const NexusGamingTestimonials = () => {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1, delay: 0.8 }}
         >
-          <Box sx={{ position: 'relative', height: '450px', mb: 6, perspective: '1000px' }}>
+          <Box sx={{ position: 'relative', height:{xs: 'auto', sm: '450px'}, mb: 6, perspective: '1000px', minHeight: '360px'}}>
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentIndex}
@@ -274,6 +283,7 @@ const NexusGamingTestimonials = () => {
 
                   <CardContent sx={{ 
                     height: '100%', 
+                    width: '100%',
                     display: 'flex', 
                     flexDirection: 'column', 
                     justifyContent: 'center', 
@@ -289,6 +299,7 @@ const NexusGamingTestimonials = () => {
                         <Avatar
                           src={currentTestimonial.avatar}
                           sx={{
+                            display:{xs: 'none', sm: 'flex'},
                             width: 90,
                             height: 90,
                             mr: 4,
@@ -323,6 +334,7 @@ const NexusGamingTestimonials = () => {
                           sx={{
                             color: currentTestimonial.bgColor,
                             mb: 2,
+                            pr: 10,
                             fontWeight: 600,
                             textTransform: 'uppercase',
                             letterSpacing: '1px'
@@ -343,7 +355,6 @@ const NexusGamingTestimonials = () => {
                             }}
                           />
                         </Box>
-
                         <Box display="flex" gap={2}>
                           <Chip
                             icon={<Play size={16} />}
@@ -382,8 +393,10 @@ const NexusGamingTestimonials = () => {
                         fontStyle: 'italic',
                         lineHeight: 1.7,
                         textAlign: 'center',
-                        fontSize: { xs: '1.1rem', md: '1.3rem' },
+                        fontSize: 'clamp(0.7rem, 0.9rem, 1.1rem)',
                         fontWeight: 500,
+                        pr: 11,
+                        pb: 10,
                         textShadow: '0 2px 10px rgba(0,0,0,0.7)',
                         position: 'relative',
                         '&::before': {
@@ -422,7 +435,7 @@ const NexusGamingTestimonials = () => {
                 transition={{ type: "spring", stiffness: 300 }}
               >
                 <Box
-                  onClick={() => setCurrentIndex(index)}
+                  onClick={() => handleNavigationClick(index)}
                   sx={{
                     width: 16,
                     height: 16,
@@ -476,7 +489,7 @@ const NexusGamingTestimonials = () => {
           </Typography>
           
           <Grid container spacing={4} justifyContent="center">
-            {testimonials.slice(0, 1).map((testimonial, index) => (
+            {testimonials.slice(0, 3).map((testimonial, index) => (
               <Grid item xs={12} md={4} key={testimonial.id}>
                 <motion.div
                   initial={{ y: 50, opacity: 0 }}
